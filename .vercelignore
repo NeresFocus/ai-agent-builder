@@ -1,0 +1,7 @@
+backend/
+docs/
+*.md
+.git/
+.github/
+docker-compose.yml
+LICENSE
