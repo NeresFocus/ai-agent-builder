@@ -1,0 +1,208 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String?
+  avatar        String?
+  role          UserRole  @default(USER)
+  plan          Plan      @default(FREE)
+  emailVerified Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  agents        Agent[]
+  licenses      License[]
+  apiKeys       ApiKey[]
+  executions    Execution[]
+
+  @@index([email])
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  RESELLER
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+model Agent {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  specialty       AgentSpecialty
+  complexity      ComplexityLevel
+  systemPrompt    String          @db.Text
+  instructions    Json            // Configurações detalhadas
+  status          AgentStatus     @default(DRAFT)
+  isPublic        Boolean         @default(false)
+  version         Int             @default(1)
+
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  integrations    Integration[]
+  executions      Execution[]
+  licenses        License[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([specialty])
+  @@map("agents")
+}
+
+enum AgentSpecialty {
+  SALES
+  MARKETING
+  SUPPORT
+  OPERATIONS
+  DEVELOPMENT
+  ANALYTICS
+  CUSTOM
+}
+
+enum ComplexityLevel {
+  BASIC
+  INTERMEDIATE
+  ADVANCED
+  SUPREME
+}
+
+enum AgentStatus {
+  DRAFT
+  TESTING
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+model Integration {
+  id          String           @id @default(cuid())
+  agentId     String
+  agent       Agent            @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  type        IntegrationType
+  name        String
+  config      Json             // API keys, endpoints, etc
+  isActive    Boolean          @default(true)
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([agentId])
+  @@map("integrations")
+}
+
+enum IntegrationType {
+  ZAPIER
+  N8N
+  WEBHOOK
+  REST_API
+  GRAPHQL
+  CUSTOM
+}
+
+model Execution {
+  id          String    @id @default(cuid())
+  agentId     String
+  agent       Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  input       Json
+  output      Json?
+  tokens      Int       @default(0)
+  duration    Int       // milliseconds
+  success     Boolean
+  error       String?   @db.Text
+
+  createdAt   DateTime  @default(now())
+
+  @@index([agentId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("executions")
+}
+
+model License {
+  id          String        @id @default(cuid())
+  key         String        @unique
+  agentId     String
+  agent       Agent         @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        LicenseType
+  status      LicenseStatus @default(ACTIVE)
+  maxExecutions Int?
+  usedExecutions Int        @default(0)
+  expiresAt   DateTime?
+
+  metadata    Json?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([agentId])
+  @@index([userId])
+  @@index([key])
+  @@index([status])
+  @@map("licenses")
+}
+
+enum LicenseType {
+  TRIAL
+  MONTHLY
+  YEARLY
+  LIFETIME
+  WHITE_LABEL
+}
+
+enum LicenseStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+  SUSPENDED
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  name        String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([key])
+  @@map("api_keys")
+}
