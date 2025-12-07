@@ -159,10 +159,4 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/aiagentbuilder
 
 ### OpenAI API Errors
 
-Ensure your `OPENAI_API_KEY` is valid and has sufficient credits.
-
-## Next Steps
-
-- [Architecture Overview](./ARCHITECTURE.md)
-- [API Documentation](./API.md)
-- [Contributing Guide](./CONTRIBUTING.md)
+Ensure your `OPENAI_API_KEY` is valid ask-proj-4Fgd0dbYyOYZHGRr4FGvF-lGbtpapn9VTJg3WRZRsv0g_OB0js8EWyvB3s-2rvKTON8fxGNGCZT3BlbkFJy_fegy6ySy1i-mIZDoBf0v26UkuAQ1Q19doBbaNJ9I6bAMZJrgnOdgSIEh0HcWbXLR3HwucDQA
