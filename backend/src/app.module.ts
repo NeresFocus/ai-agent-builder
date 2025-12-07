@@ -9,6 +9,7 @@ import { IntegrationsModule } from './modules/integrations/integrations.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { AiModule } from './modules/ai/ai.module';
 import { PrismaModule } from './database/prisma.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PrismaModule } from './database/prisma.module';
       limit: parseInt(process.env.RATE_LIMIT_MAX) || 100,
     }]),
     PrismaModule,
+    HealthModule,
     AuthModule,
     UsersModule,
     AgentsModule,
