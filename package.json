@@ -2,13 +2,10 @@
   "name": "ai-agent-builder",
   "version": "1.0.0",
   "private": true,
-  "description": "AI Agent Builder Platform",
   "scripts": {
+    "build": "cd frontend && npm install && npm run build",
     "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm run start",
-    "install-frontend": "cd frontend && npm install",
-    "install-backend": "cd backend && npm install"
+    "start": "cd frontend && npm start"
   },
   "workspaces": [
     "frontend",
