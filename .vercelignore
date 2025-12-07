@@ -1,8 +1,7 @@
 backend/
 docs/
-.github/
 *.md
-!frontend/
-node_modules/
-.env
-.env.local
+.git/
+.github/
+docker-compose.yml
+LICENSE
